@@ -217,8 +217,6 @@ export default function ShaderBackground({ className }: Props) {
       if (vertexShader) gl.deleteShader(vertexShader);
       if (fragmentShader) gl.deleteShader(fragmentShader);
       gl.deleteProgram(program);
-      const lose = gl.getExtension("WEBGL_lose_context");
-      if (lose) lose.loseContext();
     };
   }, []);
 
