@@ -54,7 +54,9 @@ export default function Hero() {
             className="mt-8 font-extrabold tracking-tightest leading-[1.05] text-white"
             style={{ fontSize: "clamp(36px, 8vw, 76px)" }}
           >
-            Powering <span style={{ color: "#4ade80" }}>Digital Transformation</span>
+            Powering <span style={{ color: "#4ade80" }}>Digital</span>
+            <br />
+            <span style={{ color: "#4ade80" }}>Transformation</span>
             <br />
             Across Industries
           </motion.h1>

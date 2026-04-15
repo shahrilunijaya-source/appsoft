@@ -143,14 +143,21 @@ export default function ShaderBackground({ className }: Props) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const gl = canvas.getContext("webgl");
+    const gl = canvas.getContext("webgl", { antialias: true, alpha: true });
     if (!gl) {
       console.warn("WebGL not supported.");
       return;
     }
 
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
     const program = initShaderProgram(gl, vsSource, fsSource);
     if (!program) return;
+
+    const vertexShader = gl.getAttachedShaders(program)?.[0] ?? null;
+    const fragmentShader = gl.getAttachedShaders(program)?.[1] ?? null;
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -185,33 +192,48 @@ export default function ShaderBackground({ className }: Props) {
     resize();
 
     let rafId = 0;
-    const start = Date.now();
-    const render = () => {
-      const t = (Date.now() - start) / 1000;
+    const start = performance.now();
+
+    const drawFrame = (tSeconds: number) => {
       gl.clearColor(0, 0, 0, 1);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.useProgram(program);
       gl.uniform2f(uResolution, canvas.width, canvas.height);
-      gl.uniform1f(uTime, t);
+      gl.uniform1f(uTime, tSeconds);
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       gl.vertexAttribPointer(attribPosition, 2, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(attribPosition);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      rafId = requestAnimationFrame(render);
     };
-    rafId = requestAnimationFrame(render);
+
+    if (prefersReducedMotion) {
+      drawFrame(0);
+    } else {
+      const render = () => {
+        const t = (performance.now() - start) / 1000;
+        drawFrame(t);
+        rafId = requestAnimationFrame(render);
+      };
+      rafId = requestAnimationFrame(render);
+    }
 
     return () => {
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
       if (ro) ro.disconnect();
+      gl.deleteBuffer(positionBuffer);
+      if (vertexShader) gl.deleteShader(vertexShader);
+      if (fragmentShader) gl.deleteShader(fragmentShader);
+      gl.deleteProgram(program);
+      const lose = gl.getExtension("WEBGL_lose_context");
+      if (lose) lose.loseContext();
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      aria-hidden
+      aria-hidden="true"
       className={className ?? "absolute inset-0 w-full h-full"}
     />
   );

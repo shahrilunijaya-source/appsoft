@@ -93,17 +93,7 @@ export default function AgenticAI() {
               }}
               transition={{ duration: 0.5, ease: "easeOut" }}
               whileHover={{ y: -4 }}
-              className="rounded-[20px] p-7 transition-colors"
-              style={{
-                background: "#1f2937",
-                border: "1px solid rgba(255,255,255,0.07)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(74,222,128,0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-              }}
+              className="agentic-card rounded-[20px] p-7 bg-dark-2 transition-colors"
             >
               <div className="eyebrow" style={{ color: "#4ade80" }}>
                 {c.n} — {c.cat}

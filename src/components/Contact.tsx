@@ -129,35 +129,83 @@ export default function Contact() {
                 >
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2">
+                      <label
+                        htmlFor="firstName"
+                        className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2"
+                      >
                         First Name
                       </label>
-                      <input required type="text" className={inputClass} />
+                      <input
+                        id="firstName"
+                        name="firstName"
+                        required
+                        type="text"
+                        autoComplete="given-name"
+                        className={inputClass}
+                      />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2">
+                      <label
+                        htmlFor="lastName"
+                        className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2"
+                      >
                         Last Name
                       </label>
-                      <input required type="text" className={inputClass} />
+                      <input
+                        id="lastName"
+                        name="lastName"
+                        required
+                        type="text"
+                        autoComplete="family-name"
+                        className={inputClass}
+                      />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2"
+                    >
                       Work Email
                     </label>
-                    <input required type="email" className={inputClass} />
+                    <input
+                      id="email"
+                      name="email"
+                      required
+                      type="email"
+                      autoComplete="email"
+                      className={inputClass}
+                    />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2">
+                    <label
+                      htmlFor="organisation"
+                      className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2"
+                    >
                       Organisation
                     </label>
-                    <input type="text" className={inputClass} />
+                    <input
+                      id="organisation"
+                      name="organisation"
+                      type="text"
+                      autoComplete="organization"
+                      className={inputClass}
+                    />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2">
+                    <label
+                      htmlFor="interest"
+                      className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2"
+                    >
                       I&apos;m interested in
                     </label>
-                    <select required defaultValue="" className={inputClass}>
+                    <select
+                      id="interest"
+                      name="interest"
+                      required
+                      defaultValue=""
+                      className={inputClass}
+                    >
                       <option value="" disabled>
                         Select an option
                       </option>
@@ -168,10 +216,15 @@ export default function Contact() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2">
+                    <label
+                      htmlFor="message"
+                      className="block text-xs font-semibold uppercase tracking-widest text-grey-light mb-2"
+                    >
                       Message
                     </label>
                     <textarea
+                      id="message"
+                      name="message"
                       required
                       rows={4}
                       className={inputClass + " resize-none"}

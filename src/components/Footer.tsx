@@ -21,8 +21,7 @@ export default function Footer() {
             <Logo size="md" />
             <p className="mt-5 text-sm font-light leading-[1.7] text-white/50 max-w-xs">
               Intelligent software solutions for governments, enterprises, and
-              growing businesses. Incorporated in Kuala Lumpur, Malaysia since
-              2018.
+              growing businesses. Incorporated since 2018.
             </p>
             <span
               className="mt-5 inline-flex items-center rounded-full border border-green/30 bg-green/10 px-3 py-1 text-xs font-semibold"
