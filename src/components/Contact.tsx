@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, Mail, MapPin, Clock, Check } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Check, AlertCircle, Loader2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 type Detail = { Icon: LucideIcon; label: string; lines: string[] };
@@ -28,12 +28,43 @@ const details: Detail[] = [
 const inputClass =
   "w-full rounded-xl border border-grey-pale bg-white px-4 py-3 text-sm font-medium text-dark placeholder:text-grey-light transition-colors";
 
-export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+type Status = "idle" | "sending" | "success" | "error";
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+export default function Contact() {
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    setStatus("sending");
+    setErrorMsg("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    formData.append(
+      "access_key",
+      process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "",
+    );
+    formData.append("subject", "New enquiry from appsoftasia.com");
+    formData.append("from_name", "AppSoft Asia Website");
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus("success");
+        form.reset();
+      } else {
+        setStatus("error");
+        setErrorMsg(data.message ?? "Something went wrong. Please try again.");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMsg("Network error. Please check your connection and try again.");
+    }
   };
 
   return (
@@ -94,7 +125,7 @@ export default function Contact() {
 
           <div className="rounded-[20px] border border-grey-pale bg-grey-bg p-8 md:p-10 relative overflow-hidden">
             <AnimatePresence mode="wait">
-              {submitted ? (
+              {status === "success" ? (
                 <motion.div
                   key="success"
                   initial={{ opacity: 0, y: 12 }}
@@ -230,13 +261,44 @@ export default function Contact() {
                       className={inputClass + " resize-none"}
                     />
                   </div>
+                  <input
+                    type="checkbox"
+                    name="botcheck"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="hidden"
+                  />
+
+                  {status === "error" && (
+                    <div
+                      role="alert"
+                      className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+                    >
+                      <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+                      <span>{errorMsg}</span>
+                    </div>
+                  )}
+
                   <motion.button
-                    whileHover={{ scale: 1.01, y: -1 }}
-                    whileTap={{ scale: 0.99 }}
+                    whileHover={
+                      status !== "sending" ? { scale: 1.01, y: -1 } : undefined
+                    }
+                    whileTap={
+                      status !== "sending" ? { scale: 0.99 } : undefined
+                    }
                     type="submit"
-                    className="w-full rounded-full bg-green-deep px-6 py-3.5 text-sm font-semibold text-white hover:bg-green-dark transition-colors"
+                    disabled={status === "sending"}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-green-deep px-6 py-3.5 text-sm font-semibold text-white hover:bg-green-dark transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {status === "sending" ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Sending…
+                      </>
+                    ) : (
+                      "Send Message"
+                    )}
                   </motion.button>
                 </motion.form>
               )}
