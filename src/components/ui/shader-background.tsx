@@ -149,10 +149,6 @@ export default function ShaderBackground({ className }: Props) {
       return;
     }
 
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
     const program = initShaderProgram(gl, vsSource, fsSource);
     if (!program) return;
 
@@ -206,16 +202,12 @@ export default function ShaderBackground({ className }: Props) {
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
 
-    if (prefersReducedMotion) {
-      drawFrame(0);
-    } else {
-      const render = () => {
-        const t = (performance.now() - start) / 1000;
-        drawFrame(t);
-        rafId = requestAnimationFrame(render);
-      };
+    const render = () => {
+      const t = (performance.now() - start) / 1000;
+      drawFrame(t);
       rafId = requestAnimationFrame(render);
-    }
+    };
+    rafId = requestAnimationFrame(render);
 
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
